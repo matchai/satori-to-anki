@@ -1,4 +1,5 @@
-from typing import Optional
+from typing import Optional, Union
+from dataclasses import dataclass
 from aqt import (
     AnkiQt,
     QUrl,
@@ -9,6 +10,15 @@ from aqt import (
     QWebEngineView,
     QWebEngineProfile,
 )
+
+
+@dataclass
+class LoginSuccess:
+    token: str
+
+
+class LoginFailed(str):
+    pass
 
 
 class SatoriLoginDialog(QDialog):
@@ -40,20 +50,31 @@ class SatoriLoginDialog(QDialog):
         layout.setContentsMargins(0, 0, 0, 0)  # Remove margins for a cleaner look
         layout.addWidget(self.webview)
 
+        # Add navigation finished signal
+        self.webview.loadFinished.connect(self._on_navigation_finished)
+
+    def _on_navigation_finished(self, success: bool) -> None:
+        # Prevent user from navigating away from login
+        if self.webview.url().toString() != self.SATORI_LOGIN_URL:
+            self.reject()
+
     def _on_cookie_added(self, cookie) -> None:
+        # Return as soon as the user's session is found
         if cookie.name() == b"SessionToken":
             self.token = cookie.value()
-            # Close the dialog
             self.accept()
 
 
-def display_login_dialog(mw: AnkiQt) -> Optional[str]:
+def display_login_dialog(mw: AnkiQt) -> Union[LoginSuccess, LoginFailed]:
     try:
         dialog = SatoriLoginDialog(mw)
-        dialog.exec()
-        token = dialog.token
-        dialog.webview.destroy()
-        return token
+        result = dialog.exec()
+
+        if result == QDialog.DialogCode.Accepted and dialog.token:
+            return LoginSuccess(token=dialog.token)
+        elif result == QDialog.DialogCode.Rejected:
+            return LoginFailed("Failed to authenticate Satori Reader.")
     except Exception as e:
-        print(f"Login error: {e}")
-        return None
+        return LoginFailed(f"Unexpected error during login: {str(e)}")
+    finally:
+        dialog.webview.destroy()

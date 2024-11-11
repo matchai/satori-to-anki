@@ -1,7 +1,7 @@
 from aqt import QAction, mw
-from aqt.utils import showInfo, qconnect
+from aqt.utils import showInfo, qconnect, showWarning
 
-from .satori_reader_login import display_login_dialog
+from .satori_reader_login import LoginSuccess, display_login_dialog
 
 
 def testFunction() -> None:
@@ -12,11 +12,14 @@ def testFunction() -> None:
 
 
 def sync_satori() -> None:
-    display_login_dialog(mw)
+    result = display_login_dialog(mw)
+
+    if isinstance(result, LoginSuccess):
+        print(f"Login success {result.token}")
+    else:
+        mw.taskman.run_on_main(lambda: showWarning(str(result)))
 
 
-action = QAction("test", mw)
-# Have it call the function when clicked
+action = QAction("Pull from Satori Reader", mw)
 qconnect(action.triggered, sync_satori)
-# Add it to the tools menu
 mw.form.menuTools.addAction(action)

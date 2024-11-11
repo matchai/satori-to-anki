@@ -10,11 +10,12 @@ from aqt import (
     QWebEngineView,
     QWebEngineProfile,
 )
+from .config import AddonConfig
 
 
 @dataclass
 class LoginSuccess:
-    token: str
+    pass
 
 
 class LoginFailed(str):
@@ -71,7 +72,9 @@ def display_login_dialog(mw: AnkiQt) -> Union[LoginSuccess, LoginFailed]:
         result = dialog.exec()
 
         if result == QDialog.DialogCode.Accepted and dialog.token:
-            return LoginSuccess(token=dialog.token)
+            config = AddonConfig.get(mw)
+            config["token"] = dialog.token
+            return LoginSuccess()
         elif result == QDialog.DialogCode.Rejected:
             return LoginFailed("Failed to authenticate Satori Reader.")
     except Exception as e:

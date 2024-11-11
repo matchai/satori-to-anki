@@ -1,44 +1,50 @@
+from typing import Optional
 from aqt import AnkiQt
 from aqt.qt import *
 
-def display_login_dialog(mw: AnkiQt):
-  # Create and configure the dialog
-  d = QDialog()
-  d.setWindowTitle("Satori to Anki")
-  d.setWindowModality(Qt.WindowModality.WindowModal)
-  d.resize(600, 660)
+class SatoriLoginDialog(QDialog):
+  SATORI_LOGIN_URL = "https://www.satorireader.com/signin"
+  WINDOW_TITLE = "Satori to Anki"
+  WINDOW_SIZE = (600, 620)
 
-  url = "https://www.satorireader.com/signin"
-  token = None
 
-  def on_cookie_added(cookie) -> None:
-    nonlocal token
+  def __init__(self, mw: AnkiQt) -> None:
+    super().__init__(parent=mw)
+    self.token: Optional[str] = None
 
-    if cookie.name() != b"SessionToken":
-      return
+    # Configure dialog
+    self.setWindowModality(Qt.WindowModality.WindowModal)
+    self.setWindowTitle(self.WINDOW_TITLE)
+    self.resize(*self.WINDOW_SIZE)
 
-    # Close the dialog when the token is received
-    token = cookie.value()
-    d.accept()
+    # Setup webview
+    self.webview = QWebEngineView()
+    profile = QWebEngineProfile(self.webview)
+    profile.cookieStore().cookieAdded.connect(self._on_cookie_added)
 
-  # Setup a profile to capture cookies
-  webview = QWebEngineView()
-  profile = QWebEngineProfile("storage", webview)
-  cookie_store = profile.cookieStore()
-  cookie_store.cookieAdded.connect(on_cookie_added)
+    # Load login webpage
+    webpage = QWebEnginePage(profile, self.webview)
+    self.webview.setPage(webpage)
+    self.webview.load(QUrl(self.SATORI_LOGIN_URL))
 
-  # Load the login URL
-  webpage = QWebEnginePage(profile, webview)
-  webview.setPage(webpage)
-  webview.load(QUrl(url))
+    # Set layout
+    layout = QVBoxLayout(self)
+    layout.setContentsMargins(0, 0, 0, 0) # Remove margins for a cleaner look
+    layout.addWidget(self.webview)
 
-  # Add the webview to a dialog layout
-  layout = QVBoxLayout()
-  layout.addWidget(webview)
-  d.setLayout(layout)
+  def _on_cookie_added(self, cookie) -> None:
+    if cookie.name() == b"SessionToken":
+      self.token = cookie.value()
+       # Close the dialog
+      self.accept()
 
-  # Show the dialog until it completes
-  d.exec()
-  webview.destroy()
-
-  return token
+def display_login_dialog(mw: AnkiQt) -> Optional[str]:
+  try:
+    dialog = SatoriLoginDialog(mw)
+    dialog.exec()
+    token = dialog.token
+    dialog.webview.destroy()
+    return token
+  except Exception as e:
+    print(f"Login error: {e}")
+    return None

@@ -3,7 +3,9 @@ name = "satori-to-anki"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.13"
+# Anki recommends using Python 3.9 since that's what they use:
+# https://github.com/ankitects/anki/blob/f6a3e98ac3dcb19d54e7fdbba96bf2fa15fc2b3f/docs/development.md?plain=1#L18
+requires-python = "~=3.9"
 dependencies = [
     "aqt[qt6]>=24.11",
     "mypy>=1.13.0",

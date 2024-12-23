@@ -8,7 +8,7 @@ import time
 from .config import Config
 from .api.login import display_login_dialog
 from .api.export import request_flashcard_export
-from .api.download import get_latest_export_url
+from .api.download import download_export_file
 
 
 def sync_satori() -> None:
@@ -18,8 +18,8 @@ def sync_satori() -> None:
         return None
 
     request_flashcard_export()
-    download_url = get_latest_export_url()
-    print(f"Download URL: {download_url}")
+    file_path = download_export_file()
+    print(f"CSV file downloaded to: {file_path}")
 
 
 sync = QAction("Sync with Satori Reader", mw)

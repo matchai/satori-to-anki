@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from aqt.utils import showWarning
 import requests
 
@@ -5,6 +6,13 @@ from ..config import Config
 
 
 def request_flashcard_export() -> None:
+    # Only request flashcards every 30 minutes
+    last_export_time = Config.get("last_export_time")
+    if last_export_time is not None:
+        last_export_time = datetime.fromisoformat(last_export_time)
+        if datetime.now() - last_export_time < timedelta(minutes=30):
+            return None
+
     token = Config.get("token")
     if token is None:
         showWarning("Please login before exporting flashcards")
@@ -30,6 +38,7 @@ def request_flashcard_export() -> None:
         return None
 
     print(f"Flashcards export requested: {response.text}")
+    Config.set("last_export_time", datetime.now().isoformat())
 
 
 def _extract_error(response: requests.Response) -> str:

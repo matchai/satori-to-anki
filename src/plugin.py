@@ -7,7 +7,7 @@ import time
 from .config import Config
 from .api.login import LoginSuccess, display_login_dialog
 from .api.export import request_flashcard_export
-
+from .api.download import get_latest_export_url
 
 def sync_satori() -> None:
     token = Config.get("token")
@@ -23,7 +23,8 @@ def sync_satori() -> None:
         return None
 
     request_flashcard_export()
-
+    download_url = get_latest_export_url()
+    print(f"Download URL: {download_url}")
 
 action = QAction("Pull from Satori Reader", mw)
 qconnect(action.triggered, sync_satori)

@@ -7,7 +7,7 @@ from ..config import Config
 
 def get_latest_export_url() -> Optional[str]:
     """Get the URL of the latest completed export."""
-    token = Config.get("token")
+    token = Config.get_token()
     if token is None:
         return None
 

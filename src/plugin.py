@@ -4,33 +4,38 @@ from aqt.utils import showWarning, tooltip
 from aqt.gui_hooks import sync_did_finish
 import time
 
+
 from .config import Config
-from .api.login import LoginSuccess, display_login_dialog
+from .api.login import display_login_dialog
 from .api.export import request_flashcard_export
 from .api.download import get_latest_export_url
 
-def sync_satori() -> None:
-    token = Config.get("token")
-    if token is None:
-        result = display_login_dialog(mw)
-        if isinstance(result, LoginSuccess):
-            token = result.token
-        else:
-            showWarning(result.message)
 
+def sync_satori() -> None:
+    token = Config.get_token()
     if token is None:
-        showWarning("Login unexpectedly failed")
+        showWarning("Please login before exporting flashcards")
         return None
 
     request_flashcard_export()
     download_url = get_latest_export_url()
     print(f"Download URL: {download_url}")
 
-action = QAction("Pull from Satori Reader", mw)
-qconnect(action.triggered, sync_satori)
-mw.form.menuTools.addAction(action)
 
-sync_did_finish.append(lambda: auto_sync_satori())
+sync = QAction("Sync with Satori Reader", mw)
+qconnect(sync.triggered, sync_satori)
+mw.form.menuTools.addAction(sync)
+
+login = QAction("Login to Satori Reader", mw)
+qconnect(login.triggered, lambda: display_login_dialog(mw))
+mw.form.menuTools.addAction(login)
+
+logout = QAction("Logout from Satori Reader", mw)
+qconnect(logout.triggered, Config.clear)
+mw.form.menuTools.addAction(logout)
+
+if Config.get_token() is not None:
+    sync_did_finish.append(lambda: auto_sync_satori())
 
 
 def auto_sync_satori() -> None:

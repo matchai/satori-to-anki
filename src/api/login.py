@@ -91,7 +91,7 @@ def display_login_dialog(mw: AnkiQt) -> LoginResult:
             dialog.exec()
 
             if isinstance(dialog.login_result, LoginSuccess):
-                Config.set("token", dialog.login_result.token)
+                Config.set_token(dialog.login_result.token)
 
             return dialog.login_result
     except Exception as e:

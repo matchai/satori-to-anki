@@ -569,6 +569,7 @@ source = { registry = "https://pypi.org/simple" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/df/0a/c47a1cc272b418faff8af79b121f0cecd32b09d634253254e3a990432220/PyQt6_Qt6-6.8.1-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:1eb8460a1fdb38d0b2458c2974c01d471c1e59e4eb19ea63fc447aaba3ad530e", size = 65754939 },
     { url = "https://files.pythonhosted.org/packages/b1/e6/cc4fbc97a7d0955185e33add3ce00480f0023424d17ac6f864a504f60251/PyQt6_Qt6-6.8.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:9f3790c4ce4dc576e48b8718d55fb8743057e6cbd53a6ca1dd253ffbac9b7287", size = 59956028 },
+    { url = "https://files.pythonhosted.org/packages/01/22/c2997fe76d765d9ba960e9a099238cb419a316362bdde50fedacc23e7c7d/PyQt6_Qt6-6.8.1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:d6ca5d2b9d2ec0ee4a814b2175f641a5c4299cb80b45e0f5f8356632663f89b3", size = 72561636 },
     { url = "https://files.pythonhosted.org/packages/a1/24/907c7451901e56e5b713d70c6f65191d80a3a3caac1095fea7f2a4b0b25b/PyQt6_Qt6-6.8.1-py3-none-manylinux_2_35_x86_64.whl", hash = "sha256:08065d595f1e6fc2dde9f4450eeff89082f4bad26f600a8e9b9cc5966716bfcf", size = 72573711 },
     { url = "https://files.pythonhosted.org/packages/2b/a8/d942bb9f83ad4abd4c296cd4bbf752d1147eaa14523cc132a2b8511a3960/PyQt6_Qt6-6.8.1-py3-none-manylinux_2_39_aarch64.whl", hash = "sha256:20843cb86bd94942d1cd99e39bf1aeabb875b241a35a8ab273e4bbbfa63776db", size = 71077917 },
     { url = "https://files.pythonhosted.org/packages/ab/2c/0d45a74ea8eedf5a2a5a2628396fb2e26107ae07f6c73d6d22c7fa3d4403/PyQt6_Qt6-6.8.1-py3-none-win_amd64.whl", hash = "sha256:006d786693d0511fbcf184a862edbd339c6ed1bb3bd9de363d73a19ed4b23dff", size = 71647964 },
@@ -630,6 +631,7 @@ source = { registry = "https://pypi.org/simple" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/12/94/d81bc5cc07b8bfb26b939f47e9f1ac84f19c97a5848613cb56c001cd2274/PyQt6_WebEngine_Qt6-6.8.1-py3-none-macosx_10_14_x86_64.whl", hash = "sha256:79f67a459ecb452f865e04f19122a1d6f30c83d9a1ffd06e7e6f0d652204083a", size = 113139940 },
     { url = "https://files.pythonhosted.org/packages/a9/f0/567afc399514d2c81ee6f86563a7f8c4b880b9a8b44ae77e521ba9ed357c/PyQt6_WebEngine_Qt6-6.8.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:e36574aa55b30633a12aa000835f01e488a0f0c13513fd9a0d50c2281e0a9068", size = 101998864 },
+    { url = "https://files.pythonhosted.org/packages/88/77/69ae7fd51a18edecb5c2ffcb3827a71281839c998a2c2c94179490f727e4/PyQt6_WebEngine_Qt6-6.8.1-py3-none-manylinux_2_28_x86_64.whl", hash = "sha256:a375dbb34e03707b0ab4830b61e4d77a31dc3ef880421c8936472f2af34a3f80", size = 105208443 },
     { url = "https://files.pythonhosted.org/packages/25/5b/3128529503babe9f44bce0a72be2ef8a847c091843a6d4a0f40f17fb3010/PyQt6_WebEngine_Qt6-6.8.1-py3-none-manylinux_2_35_x86_64.whl", hash = "sha256:0405b6ce35f406affb27547c6c3608dc82405568af71505fefae4081c8b4ac39", size = 105220519 },
     { url = "https://files.pythonhosted.org/packages/0e/f5/1fb7e548e77b458ebca8c8e0f3b04e3628fe1951363b3abd68139f7ea6f8/PyQt6_WebEngine_Qt6-6.8.1-py3-none-manylinux_2_39_aarch64.whl", hash = "sha256:8059118591641cc9da6616343d893c77fbd065bef3e0764679543345e2c75123", size = 101199242 },
     { url = "https://files.pythonhosted.org/packages/b0/b5/a641ebe3e5113bee23d911c58fdd2e65061a6e3786a26b068468b988e5d2/PyQt6_WebEngine_Qt6-6.8.1-py3-none-win_amd64.whl", hash = "sha256:0ced2a10433da2571cfa29ed882698e0e164184d54068d17ba73799c45af5f0f", size = 95657750 },
@@ -840,6 +842,7 @@ source = { virtual = "." }
 dependencies = [
     { name = "aqt", extra = ["qt6"] },
     { name = "mypy" },
+    { name = "requests" },
     { name = "ruff" },
 ]
 
@@ -847,6 +850,7 @@ dependencies = [
 requires-dist = [
     { name = "aqt", extras = ["qt6"], specifier = ">=24.11" },
     { name = "mypy", specifier = ">=1.13.0" },
+    { name = "requests", specifier = ">=2.32.3" },
     { name = "ruff", specifier = ">=0.8.3" },
 ]
 

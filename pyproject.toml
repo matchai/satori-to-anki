@@ -9,5 +9,6 @@ requires-python = "~=3.9"
 dependencies = [
     "aqt[qt6]>=24.11",
     "mypy>=1.13.0",
+    "requests>=2.32.3",
     "ruff>=0.8.3",
 ]

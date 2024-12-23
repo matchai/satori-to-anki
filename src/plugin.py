@@ -4,6 +4,7 @@ from aqt.utils import showWarning
 
 from .config import Config
 from .api.login import LoginSuccess, display_login_dialog
+from .api.flashcards import request_flashcard_export
 
 
 def sync_satori() -> None:
@@ -19,7 +20,7 @@ def sync_satori() -> None:
         showWarning("Login unexpectedly failed")
         return None
 
-    print("Login success")
+    request_flashcard_export()
 
 
 action = QAction("Pull from Satori Reader", mw)

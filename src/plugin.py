@@ -1,10 +1,12 @@
 from aqt import QAction, mw
 from aqt.qt import qconnect
-from aqt.utils import showWarning
+from aqt.utils import showWarning, tooltip
+from aqt.gui_hooks import sync_did_finish
+import time
 
 from .config import Config
 from .api.login import LoginSuccess, display_login_dialog
-from .api.flashcards import request_flashcard_export
+from .api.export import request_flashcard_export
 
 
 def sync_satori() -> None:
@@ -26,3 +28,15 @@ def sync_satori() -> None:
 action = QAction("Pull from Satori Reader", mw)
 qconnect(action.triggered, sync_satori)
 mw.form.menuTools.addAction(action)
+
+sync_did_finish.append(lambda: auto_sync_satori())
+
+
+def auto_sync_satori() -> None:
+    start_time = time.time()
+
+    def on_done(future) -> None:
+        tooltip(f"Synced with Satori Reader in {time.time() - start_time:.2f} seconds")
+        mw.reset()
+
+    mw.taskman.run_in_background(lambda: sync_satori(), on_done)

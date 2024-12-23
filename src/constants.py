@@ -1,1 +1,0 @@
-ADDON = "satori-to-anki"

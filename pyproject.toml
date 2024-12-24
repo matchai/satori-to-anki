@@ -15,10 +15,14 @@ dependencies = [
 ]
 
 [tool.ruff]
-select = ["ALL"]
-ignore = [
+target-version = "py39"
+lint.select = ["ALL"]
+lint.ignore = [
     "D",    # Disable documentation linter rules
     "T201", # Allow print statements
     "INP001", # Allow for packages without __init__.py
     "BLE001", # Allow for blind-catch exceptions
+    "TID252", # Allow relative imports
+    "UP007", # Disable py3.10+ features
+    "PYI034", # Don't require __enter__ to return `Self`
 ]

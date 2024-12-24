@@ -1,5 +1,7 @@
+from __future__ import annotations
+
 from dataclasses import dataclass
-from typing import Union
+from typing import TYPE_CHECKING, Union
 
 from aqt import (
     QDialog,
@@ -10,10 +12,14 @@ from aqt import (
     QWebEngineProfile,
     QWebEngineView,
 )
-from aqt.main import AnkiQt
-from PyQt6.QtNetwork import QNetworkCookie
 
-from src.config import Config
+from ..config import Config
+
+if TYPE_CHECKING:
+    from types import TracebackType
+
+    from aqt.main import AnkiQt
+    from PyQt6.QtNetwork import QNetworkCookie
 
 
 @dataclass
@@ -39,10 +45,15 @@ class SatoriLoginDialog(QDialog):
         self.login_result = LoginFailed(message="Failed to authenticate Satori Reader.")
         self._setup_dialog()
 
-    def __enter__(self) -> "SatoriLoginDialog":
+    def __enter__(self) -> SatoriLoginDialog:
         return self
 
-    def __exit__(self, exc_type, exc_value, traceback) -> None:
+    def __exit__(
+        self,
+        _exc_type: Union[type[BaseException], None],
+        _exc_value: Union[BaseException, None],
+        _traceback: Union[TracebackType, None],
+    ) -> None:
         self.webview.destroy()
 
     def _setup_dialog(self) -> None:
@@ -55,7 +66,7 @@ class SatoriLoginDialog(QDialog):
         profile = QWebEngineProfile(self.webview)
         cookie_store = profile.cookieStore()
         if cookie_store is None:
-            raise RuntimeError("Failed to get cookie store")
+            raise RuntimeError(message="Cookie store initialization failed")
 
         # Listen for cookie added event
         cookie_store.cookieAdded.connect(self._on_cookie_added)
@@ -73,7 +84,7 @@ class SatoriLoginDialog(QDialog):
         # Listen for navigation finished signal
         self.webview.loadFinished.connect(self._on_navigation_finished)
 
-    def _on_navigation_finished(self, success: bool) -> None:
+    def _on_navigation_finished(self, *, _success: bool) -> None:
         # Prevent user from navigating away from login
         if self.webview.url().toString() != self.SATORI_LOGIN_URL:
             self.login_result = LoginFailed(message="Navigated away from login page")

@@ -3,7 +3,7 @@ from datetime import datetime, timedelta, timezone
 import requests
 from aqt.utils import showWarning
 
-from src.config import Config
+from ..config import Config
 
 
 def request_flashcard_export() -> None:

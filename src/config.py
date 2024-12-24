@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Optional
 
 from aqt import mw
 
@@ -36,7 +36,7 @@ class Config:
         cls._save()
 
     @classmethod
-    def get_token(cls) -> str | None:
+    def get_token(cls) -> Optional[str]:
         return cls._data.get("token")
 
     @classmethod
@@ -45,7 +45,7 @@ class Config:
         cls._save()
 
     @classmethod
-    def get_last_export_time(cls) -> datetime | None:
+    def get_last_export_time(cls) -> Optional[datetime]:
         timestamp = cls._data.get("last_export_time")
         return datetime.fromisoformat(timestamp) if timestamp else None
 

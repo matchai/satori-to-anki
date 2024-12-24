@@ -1,5 +1,6 @@
 import time
-from typing import Callable, Future
+from collections.abc import Callable
+from concurrent.futures import Future
 
 from aqt import QAction, mw
 from aqt.gui_hooks import sync_did_finish

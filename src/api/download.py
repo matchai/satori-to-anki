@@ -3,14 +3,15 @@ from __future__ import annotations
 import tempfile
 import zipfile
 from pathlib import Path
+from typing import Optional
 
 import requests
 from bs4 import BeautifulSoup
 
-from src.config import Config
+from ..config import Config
 
 
-def get_latest_export_url() -> str | None:
+def get_latest_export_url() -> Optional[str]:
     """Get the URL of the latest completed export."""
     token = Config.get_token()
     if token is None:
@@ -34,7 +35,7 @@ def get_latest_export_url() -> str | None:
     return completed_links[0]["href"] if completed_links else None
 
 
-def download_export_file() -> str | None:
+def download_export_file() -> Optional[str]:
     """Downloads the latest export file and saves it to a temporary location."""
     url = get_latest_export_url()
     if not url or not (token := Config.get_token()):  # Use walrus operator

@@ -1,5 +1,5 @@
 [project]
-name = "satori-to-anki"
+name = "satori_to_anki"
 version = "0.1.0"
 description = "Anki plugin for importing flashcards from Satori Reader"
 readme = "README.md"
@@ -16,3 +16,4 @@ dependencies = [
 
 [tool.ruff]
 select = ["ALL"]
+ignore = ["D"]

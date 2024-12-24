@@ -1,4 +1,5 @@
 import time
+from typing import Callable, Future
 
 from aqt import QAction, mw
 from aqt.gui_hooks import sync_did_finish
@@ -41,7 +42,7 @@ if Config.get_token() is not None:
 def auto_sync_satori() -> None:
     start_time = time.time()
 
-    def on_done(future) -> None:
+    def on_done(_future: Callable[Future, None]) -> None:
         tooltip(f"Synced with Satori Reader in {time.time() - start_time:.2f} seconds")
         mw.reset()
 

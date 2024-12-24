@@ -13,7 +13,7 @@ from aqt import (
 from aqt.main import AnkiQt
 from PyQt6.QtNetwork import QNetworkCookie
 
-from ..config import Config
+from src.config import Config
 
 
 @dataclass

@@ -6,7 +6,7 @@ from typing import Optional
 import requests
 from bs4 import BeautifulSoup
 
-from ..config import Config
+from src.config import Config
 
 
 def get_latest_export_url() -> Optional[str]:

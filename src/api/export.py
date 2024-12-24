@@ -1,19 +1,22 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 import requests
 from aqt.utils import showWarning
 
-from ..config import Config
+from src.config import Config
 
 
 def request_flashcard_export() -> None:
     # Only request flashcards every 30+ minutes
     last_export_time = Config.get_last_export_time()
-    if last_export_time is not None:
-        # Only request flashcards every 150 minutes, preventing the 10 times in 24 hour limit
-        if datetime.now() - last_export_time < timedelta(minutes=150):
-            print(f"Flashcards exported {last_export_time}, skipping")
-            return
+    # Only request flashcards every 150 minutes, preventing the 10 times in 24 hour limit
+    if last_export_time is not None and datetime.now(
+        tz=timezone.utc,
+    ) - last_export_time < timedelta(
+        minutes=150,
+    ):
+        print(f"Flashcards exported {last_export_time}, skipping")
+        return
 
     token = Config.get_token()
     if token is None:

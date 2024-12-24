@@ -1,21 +1,21 @@
-from aqt import QAction, mw
-from aqt.qt import qconnect
-from aqt.utils import showWarning, tooltip
-from aqt.gui_hooks import sync_did_finish
 import time
 
+from aqt import QAction, mw
+from aqt.gui_hooks import sync_did_finish
+from aqt.qt import qconnect
+from aqt.utils import showWarning, tooltip
 
-from .config import Config
-from .api.login import display_login_dialog
-from .api.export import request_flashcard_export
 from .api.download import download_export_file
+from .api.export import request_flashcard_export
+from .api.login import display_login_dialog
+from .config import Config
 
 
 def sync_satori() -> None:
     token = Config.get_token()
     if token is None:
         showWarning("Please login before exporting flashcards")
-        return None
+        return
 
     request_flashcard_export()
     file_path = download_export_file()

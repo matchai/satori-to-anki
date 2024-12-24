@@ -2,6 +2,7 @@ import os
 import tempfile
 import zipfile
 from typing import Optional
+
 import requests
 from bs4 import BeautifulSoup
 
@@ -67,7 +68,7 @@ def download_export_file() -> Optional[str]:
             return csv_temp.name
 
     except Exception as e:
-        print(f"Failed to process export file: {str(e)}")
+        print(f"Failed to process export file: {e!s}")
         for temp_file in [zip_temp.name, csv_temp.name]:
             if os.path.exists(temp_file):
                 os.unlink(temp_file)

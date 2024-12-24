@@ -1,13 +1,14 @@
-from typing import Union
 from dataclasses import dataclass
+from typing import Union
+
 from aqt import (
+    QDialog,
+    Qt,
     QUrl,
     QVBoxLayout,
     QWebEnginePage,
-    Qt,
-    QDialog,
-    QWebEngineView,
     QWebEngineProfile,
+    QWebEngineView,
 )
 from aqt.main import AnkiQt
 from PyQt6.QtNetwork import QNetworkCookie
@@ -95,4 +96,4 @@ def display_login_dialog(mw: AnkiQt) -> LoginResult:
 
             return dialog.login_result
     except Exception as e:
-        return LoginFailed(message=f"Unexpected error during login: {str(e)}")
+        return LoginFailed(message=f"Unexpected error during login: {e!s}")

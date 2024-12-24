@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Any, Optional
+
 from aqt import mw
 
 tag = mw.addonManager.addonFromModule(__name__)

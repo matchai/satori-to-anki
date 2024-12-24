@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
-from aqt.utils import showWarning
+
 import requests
+from aqt.utils import showWarning
 
 from ..config import Config
 
@@ -12,12 +13,12 @@ def request_flashcard_export() -> None:
         # Only request flashcards every 150 minutes, preventing the 10 times in 24 hour limit
         if datetime.now() - last_export_time < timedelta(minutes=150):
             print(f"Flashcards exported {last_export_time}, skipping")
-            return None
+            return
 
     token = Config.get_token()
     if token is None:
         showWarning("Please login before exporting flashcards")
-        return None
+        return
 
     response = requests.post(
         "https://www.satorireader.com/api/studylist/export",
@@ -36,12 +37,12 @@ def request_flashcard_export() -> None:
     if did_hit_rate_limit(response):
         Config.set_last_export_time(datetime.now())
         print("Hit rate limit, skipping export")
-        return None
+        return
 
     if response.status_code != 200 or not response.json().get("success"):
         error_msg = _extract_error(response)
         showWarning(f"Failed to export flashcards: {error_msg}")
-        return None
+        return
 
     print(f"Flashcards export requested: {response.text}")
     Config.set_last_export_time(datetime.now())

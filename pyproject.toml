@@ -16,4 +16,9 @@ dependencies = [
 
 [tool.ruff]
 select = ["ALL"]
-ignore = ["D"]
+ignore = [
+    "D",    # Disable documentation linter rules
+    "T201", # Allow print statements
+    "INP001", # Allow for packages without __init__.py
+    "BLE001", # Allow for blind-catch exceptions
+]

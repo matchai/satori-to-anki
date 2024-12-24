@@ -9,7 +9,8 @@ from src.config import Config
 def request_flashcard_export() -> None:
     # Only request flashcards every 30+ minutes
     last_export_time = Config.get_last_export_time()
-    # Only request flashcards every 150 minutes, preventing the 10 times in 24 hour limit
+    # Only request flashcards every 150 minutes, preventing the 10 times in the
+    # 24 hour limit
     if last_export_time is not None and datetime.now(
         tz=timezone.utc,
     ) - last_export_time < timedelta(
@@ -35,20 +36,21 @@ def request_flashcard_export() -> None:
             "cardTypes": ["JE"],
             "furiganaNotationFormat": "Anki",
         },
+        timeout=10,
     )
 
     if did_hit_rate_limit(response):
-        Config.set_last_export_time(datetime.now())
+        Config.set_last_export_time(datetime.now(tz=timezone.utc))
         print("Hit rate limit, skipping export")
         return
 
-    if response.status_code != 200 or not response.json().get("success"):
+    if response.status_code == requests.codes.ok or not response.json().get("success"):
         error_msg = _extract_error(response)
         showWarning(f"Failed to export flashcards: {error_msg}")
         return
 
     print(f"Flashcards export requested: {response.text}")
-    Config.set_last_export_time(datetime.now())
+    Config.set_last_export_time(datetime.now(tz=timezone.utc))
 
 
 def _extract_error(response: requests.Response) -> str:
@@ -64,4 +66,7 @@ def _extract_error(response: requests.Response) -> str:
 
 
 def did_hit_rate_limit(response: requests.Response) -> bool:
-    return response.status_code == 200 and response.json().get("success") is False
+    return (
+        response.status_code == requests.codes.ok
+        and response.json().get("success") is False
+    )

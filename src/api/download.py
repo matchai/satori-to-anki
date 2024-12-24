@@ -1,7 +1,8 @@
-import os
+from __future__ import annotations
+
 import tempfile
 import zipfile
-from typing import Optional
+from pathlib import Path
 
 import requests
 from bs4 import BeautifulSoup
@@ -9,7 +10,7 @@ from bs4 import BeautifulSoup
 from src.config import Config
 
 
-def get_latest_export_url() -> Optional[str]:
+def get_latest_export_url() -> str | None:
     """Get the URL of the latest completed export."""
     token = Config.get_token()
     if token is None:
@@ -18,9 +19,10 @@ def get_latest_export_url() -> Optional[str]:
     response = requests.get(
         "https://www.satorireader.com/review/exports",
         headers={"Cookie": f"SessionToken={token}"},
+        timeout=10,
     )
 
-    if response.status_code != 200:
+    if response.status_code != requests.codes.ok:
         print(f"Failed to fetch exports: HTTP {response.status_code}")
         return None
 
@@ -32,7 +34,7 @@ def get_latest_export_url() -> Optional[str]:
     return completed_links[0]["href"] if completed_links else None
 
 
-def download_export_file() -> Optional[str]:
+def download_export_file() -> str | None:
     """Downloads the latest export file and saves it to a temporary location."""
     url = get_latest_export_url()
     if not url or not (token := Config.get_token()):  # Use walrus operator
@@ -42,9 +44,10 @@ def download_export_file() -> Optional[str]:
         url,
         headers={"Cookie": f"SessionToken={token}"},
         stream=True,  # Add streaming for binary file
+        timeout=10,
     )
 
-    if response.status_code != 200:
+    if response.status_code != requests.codes.ok:
         print(f"Failed to download export file: HTTP {response.status_code}")
         return None
 
@@ -64,12 +67,12 @@ def download_export_file() -> Optional[str]:
                     csv_temp.write(zipped_file.read())
 
             # Clean up the zip file
-            os.unlink(zip_temp.name)
+            Path(zip_temp.name).unlink()
             return csv_temp.name
 
     except Exception as e:
         print(f"Failed to process export file: {e!s}")
         for temp_file in [zip_temp.name, csv_temp.name]:
-            if os.path.exists(temp_file):
-                os.unlink(temp_file)
+            if Path(temp_file).exists():
+                Path(temp_file).unlink()
         return None

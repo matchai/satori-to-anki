@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from aqt import mw
@@ -47,7 +47,11 @@ class Config:
     @classmethod
     def get_last_export_time(cls) -> Optional[datetime]:
         timestamp = cls._data.get("last_export_time")
-        return datetime.fromisoformat(timestamp) if timestamp else None
+        if timestamp is None:
+            return None
+        # Convert to UTC
+        dt = datetime.fromisoformat(timestamp)
+        return dt.replace(tzinfo=timezone.utc)
 
     @classmethod
     def set_last_export_time(cls, value: datetime) -> None:

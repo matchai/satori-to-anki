@@ -1,13 +1,11 @@
 from datetime import datetime, timedelta, timezone
 
 import requests
-from aqt.utils import showWarning
 
 from ..config import Config
 
 
 def request_flashcard_export() -> None:
-    # Only request flashcards every 30+ minutes
     last_export_time = Config.get_last_export_time()
     # Only request flashcards every 150 minutes, preventing the 10 times in the
     # 24 hour limit
@@ -16,14 +14,15 @@ def request_flashcard_export() -> None:
     ) - last_export_time < timedelta(
         minutes=150,
     ):
-        print(f"Flashcards exported {last_export_time}, skipping")
+        print("Flashcards exported too recently, skipping")
         return
 
     token = Config.get_token()
     if token is None:
-        showWarning("Please login before exporting flashcards")
+        print("Please login before exporting flashcards")
         return
 
+    return
     response = requests.post(
         "https://www.satorireader.com/api/studylist/export",
         headers={
@@ -44,9 +43,10 @@ def request_flashcard_export() -> None:
         print("Hit rate limit, skipping export")
         return
 
-    if response.status_code == requests.codes.ok or not response.json().get("success"):
+    if not response.ok or not response.json().get("success"):
+        print(response)
         error_msg = _extract_error(response)
-        showWarning(f"Failed to export flashcards: {error_msg}")
+        print(f"Failed to export flashcards: {error_msg}")
         return
 
     print(f"Flashcards export requested: {response.text}")
@@ -66,7 +66,4 @@ def _extract_error(response: requests.Response) -> str:
 
 
 def did_hit_rate_limit(response: requests.Response) -> bool:
-    return (
-        response.status_code == requests.codes.ok
-        and response.json().get("success") is False
-    )
+    return response.ok and response.json().get("success") is False

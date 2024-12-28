@@ -13,6 +13,7 @@ from ..config import Config
 
 def get_latest_export_url() -> Optional[str]:
     """Get the URL of the latest completed export."""
+    print("Getting latest export URL")
     token = Config.get_token()
     if token is None:
         return None
@@ -23,7 +24,7 @@ def get_latest_export_url() -> Optional[str]:
         timeout=10,
     )
 
-    if response.status_code != requests.codes.ok:
+    if not response.ok:
         print(f"Failed to fetch exports: HTTP {response.status_code}")
         return None
 
@@ -48,7 +49,7 @@ def download_export_file() -> Optional[str]:
         timeout=10,
     )
 
-    if response.status_code != requests.codes.ok:
+    if not response.ok:
         print(f"Failed to download export file: HTTP {response.status_code}")
         return None
 
@@ -58,9 +59,14 @@ def download_export_file() -> Optional[str]:
             tempfile.NamedTemporaryFile(suffix=".zip", delete=False) as zip_temp,
             tempfile.NamedTemporaryFile(suffix=".csv", delete=False) as csv_temp,
         ):
+            # Download the zip file
             for chunk in response.iter_content(chunk_size=8192):
                 if chunk:
                     zip_temp.write(chunk)
+
+            # Make sure all data is written to disk
+            zip_temp.flush()
+            zip_temp.close()
 
             with zipfile.ZipFile(zip_temp.name, "r") as zip_ref:
                 csv_filename = zip_ref.namelist()[0]

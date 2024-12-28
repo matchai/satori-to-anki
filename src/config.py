@@ -57,3 +57,21 @@ class Config:
     def set_last_export_time(cls, value: datetime) -> None:
         cls._data["last_export_time"] = value.isoformat()
         cls._save()
+
+    @classmethod
+    def get_deck_name(cls) -> str:
+        return cls._data.get("deck_name", "Satori Reader")
+
+    @classmethod
+    def get_note_type_name(cls) -> str:
+        return cls._data.get("note_type_name", "Satori Reader")
+
+    @classmethod
+    def set_deck_name(cls, value: str) -> None:
+        cls._data["deck_name"] = value
+        cls._save()
+
+    @classmethod
+    def set_note_type_name(cls, value: str) -> None:
+        cls._data["note_type_name"] = value
+        cls._save()

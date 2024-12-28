@@ -5,23 +5,28 @@ from concurrent.futures import Future
 from aqt import QAction, mw
 from aqt.gui_hooks import sync_did_finish
 from aqt.qt import qconnect
-from aqt.utils import showWarning, tooltip
+from aqt.utils import tooltip
 
 from .api.download import download_export_file
 from .api.export import request_flashcard_export
 from .api.login import display_login_dialog
 from .config import Config
+from .flashcards import import_flashcards_from_file
 
 
 def sync_satori() -> None:
     token = Config.get_token()
     if token is None:
-        showWarning("Please login before exporting flashcards")
+        print("Please login before exporting flashcards")
         return
 
     request_flashcard_export()
     file_path = download_export_file()
-    print(f"CSV file downloaded to: {file_path}")
+    if file_path is None:
+        print("Failed to download export file")
+        return
+
+    import_flashcards_from_file(file_path)
 
 
 sync = QAction("Sync with Satori Reader", mw)

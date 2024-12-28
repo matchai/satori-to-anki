@@ -1,12 +1,20 @@
 from anki.collection import Delimiter, ImportCsvRequest
 from aqt import mw
 
+from .config import Config
+
 
 def import_flashcards_from_file(file_path: str) -> None:
     try:
         print(f"Importing flashcards from file: {file_path}")
 
+        deck_id = mw.col.decks.id(name=Config.get_deck_name())
+        if deck_id is None:
+            print(f"Deck {Config.get_deck_name()} not found")
+            return
+
         metadata = mw.col.get_csv_metadata(path=file_path, delimiter=Delimiter.COMMA)
+        metadata.deck_id = deck_id
         print(f"Metadata retrieved: {metadata}")
 
         request = ImportCsvRequest(
